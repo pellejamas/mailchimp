@@ -1,8 +1,13 @@
 package stepDefinitions;
 import static org.junit.Assert.assertEquals;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
+
 import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 import io.cucumber.java.*;
 import io.cucumber.java.en.*;
 
@@ -17,7 +22,7 @@ public class StepDefinitions {
 		System.setProperty("webdriver.chrome.driver", "C:\\Program Files\\Selenium\\chromedriver_win32\\chromedriver.exe");
 		driver = new ChromeDriver(); 									    
 		driver.get("https:login.mailchimp.com/signup"); 				  	
-		Thread.sleep(1000); 											  	
+		Thread.sleep(1000); 												// Behövdes för att kunna ta bort cookies och få gröna junittest (funkade inte med impicitlywait)											  	
 		driver.findElement(By.id("onetrust-accept-btn-handler")).click(); 	// Klickar på "Accept All Cookies"
 	}
 
@@ -26,26 +31,25 @@ public class StepDefinitions {
 	if (random.equals("0")){
 		email = driver.findElement(By.id("email")); 						
 		email.sendKeys(mail);												
-		Thread.sleep(1000); 												
+		 												
 	}
 	if (random.equals("1")) {
-		Thread.sleep(1000); 												// Vänta 1sek
+		driver.manage().timeouts().implicitlyWait(1000, TimeUnit.SECONDS);	// Vänta för random mail
 		email = driver.findElement(By.id("email")); 						// Hittar email-rutan
 		email.sendKeys(rand+mail.substring(5));								// Skriver in en randomEmail
 	}
 }
 	
-	@And(("I have also entered {string} as an username or {string} randomUsername"))
+	@And("I have also entered {string} as an username or {string} randomUsername")
 	public void i_have_also_entered_string_as_an_username_or_string_randomUsername(String username, String random) throws InterruptedException {
 		if (random.equals("0")){
 			user = driver.findElement(By.id("new_username")); 				
-			user.sendKeys(username);						  				
-			Thread.sleep(1000); 							  				
+			user.sendKeys(username);						  				 							  				
 		}
 		if (random.equals("1")) {
-			Thread.sleep(1000); 							  				// Vänta 1sek
-			user = driver.findElement(By.id("new_username")); 		  		// Hittar användarnamn-rutan
-			user.sendKeys(rand.nextInt(100)+username+rand.nextInt(100));	// Skriver in ett randomAnvändernamn
+			driver.manage().timeouts().implicitlyWait(1000, TimeUnit.SECONDS); 	// Vänta för random username
+			user = driver.findElement(By.id("new_username")); 		  			// Hittar användarnamn-rutan
+			user.sendKeys(rand.nextInt(100)+username+rand.nextInt(100));		// Skriver in ett randomAnvändernamn
 		}
 	}
 	
@@ -53,9 +57,13 @@ public class StepDefinitions {
 	public void i_have_also_entered_string_as_an_password(String password) throws InterruptedException {
 		pass = driver.findElement(By.id("new_password")); 					
 		pass.sendKeys(password); 						  					
-		Thread.sleep(1000); 							  					
 	}
-	
+	public static void click(WebDriver driver, By by) {							//Waitmetoden
+		(new WebDriverWait(driver,1000)).until(ExpectedConditions.
+		elementToBeClickable(by));
+		driver.findElement(by).click();
+		}
+
 	@When("I press sign up")
 	public void i_press_sign_up() {
 		driver.findElement(By.id("create-account")).click(); 				
@@ -75,13 +83,12 @@ public class StepDefinitions {
 		}
 		else if (finalOutput.equals("Please enter a value")) {
 			assertEquals(driver.findElement(By.cssSelector(".invalid-error")).getText(), output);
-		}
-		Thread.sleep(1000); 												
+		}									
 	}
 
 	@After
 	public void closeBrowser() throws InterruptedException {
-		Thread.sleep(1000); 												
+		Thread.sleep(3000); 												// Behövdes för att kunna se hur testet gick som jag ville												
 		driver.quit(); 														
 	}
 }
