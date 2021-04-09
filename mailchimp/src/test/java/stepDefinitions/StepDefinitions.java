@@ -27,40 +27,39 @@ public class StepDefinitions {
 	}
 
 	@Given("I have entered {string} as a mail or {string} randomMail")
-	public void i_have_entered_string_as_a_mail(String mail, String random) throws InterruptedException {
+	public void i_have_entered_string_as_a_mail(String mail, String random) {
 	if (random.equals("0")){
 		email = driver.findElement(By.id("email")); 						
 		email.sendKeys(mail);												
 		 												
 	}
 	if (random.equals("1")) {
-		driver.manage().timeouts().implicitlyWait(1000, TimeUnit.SECONDS);	// Vänta för random mail
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);	// Vänta för random mail
 		email = driver.findElement(By.id("email")); 						// Hittar email-rutan
 		email.sendKeys(rand+mail.substring(5));								// Skriver in en randomEmail
 	}
 }
 	
 	@And("I have also entered {string} as an username or {string} randomUsername")
-	public void i_have_also_entered_string_as_an_username_or_string_randomUsername(String username, String random) throws InterruptedException {
+	public void i_have_also_entered_string_as_an_username_or_string_randomUsername(String username, String random) {
 		if (random.equals("0")){
 			user = driver.findElement(By.id("new_username")); 				
 			user.sendKeys(username);						  				 							  				
 		}
 		if (random.equals("1")) {
-			driver.manage().timeouts().implicitlyWait(1000, TimeUnit.SECONDS); 	// Vänta för random username
+			driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS); 	// Vänta för random username
 			user = driver.findElement(By.id("new_username")); 		  			// Hittar användarnamn-rutan
 			user.sendKeys(rand.nextInt(100)+username+rand.nextInt(100));		// Skriver in ett randomAnvändernamn
 		}
 	}
 	
 	@And("I have also entered {string} as an password")
-	public void i_have_also_entered_string_as_an_password(String password) throws InterruptedException {
+	public void i_have_also_entered_string_as_an_password(String password) {
 		pass = driver.findElement(By.id("new_password")); 					
 		pass.sendKeys(password); 						  					
 	}
 	public static void click(WebDriver driver, By by) {							//Waitmetoden
-		(new WebDriverWait(driver,1000)).until(ExpectedConditions.
-		elementToBeClickable(by));
+		(new WebDriverWait(driver,10)).until(ExpectedConditions.elementToBeClickable(by));
 		driver.findElement(by).click();
 		}
 
@@ -70,7 +69,7 @@ public class StepDefinitions {
 	}
 	
 	@Then("I should get the correct {string} output")
-	public void i_should_get_the_correct_string_output(String output) throws InterruptedException {
+	public void i_should_get_the_correct_string_output(String output) {
 		String finalOutput = "";
 		if (finalOutput.equals("Check your email")) {
 			 assertEquals(driver.findElement(By.cssSelector(".\\!margin-bottom--lv3")).getText(), output);
@@ -88,7 +87,7 @@ public class StepDefinitions {
 
 	@After
 	public void closeBrowser() throws InterruptedException {
-		Thread.sleep(3000); 												// Behövdes för att kunna se hur testet gick som jag ville												
+		Thread.sleep(3000); 												// Behövdes för att kunna se om testet gick som jag ville												
 		driver.quit(); 														
 	}
 }
